@@ -7,3 +7,4 @@ fun defineSubProject(name: String, path: String) {
 
 defineSubProject("rpc-client", "rpc-client")
 defineSubProject("rpc-server", "rpc-server")
+defineSubProject("rpc-contract", "rpc-contract")
