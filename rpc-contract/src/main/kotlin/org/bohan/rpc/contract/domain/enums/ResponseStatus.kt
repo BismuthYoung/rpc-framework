@@ -1,4 +1,4 @@
-package org.bohan.rpc.client.domain.enums
+package org.bohan.rpc.contract.domain.enums
 
 enum class ResponseStatus(
     val code: Int,

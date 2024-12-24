@@ -1,7 +1,7 @@
-package org.bohan.rpc.client.domain.resp
+package org.bohan.rpc.contract.domain.resp
 
 import lombok.Builder
-import org.bohan.rpc.client.domain.enums.ResponseStatus
+import org.bohan.rpc.contract.domain.enums.ResponseStatus
 
 @Builder
 data class RpcResponse<T>(

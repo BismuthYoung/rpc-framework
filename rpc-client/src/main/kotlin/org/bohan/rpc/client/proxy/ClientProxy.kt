@@ -1,7 +1,7 @@
 package org.bohan.rpc.client.proxy
 
 import org.bohan.rpc.client.IOClient
-import org.bohan.rpc.client.domain.req.RpcRequest
+import org.bohan.rpc.contract.domain.req.RpcRequest
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy

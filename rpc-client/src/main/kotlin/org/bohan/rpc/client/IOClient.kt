@@ -1,7 +1,7 @@
 package org.bohan.rpc.client
 
-import org.bohan.rpc.client.domain.req.RpcRequest
-import org.bohan.rpc.client.domain.resp.RpcResponse
+import org.bohan.rpc.contract.domain.req.RpcRequest
+import org.bohan.rpc.contract.domain.resp.RpcResponse
 import java.io.IOException
 
 import java.io.ObjectInputStream

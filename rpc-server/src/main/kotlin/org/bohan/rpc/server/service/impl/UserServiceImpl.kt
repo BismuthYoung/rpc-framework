@@ -8,11 +8,7 @@ class UserServiceImpl: UserService {
     override fun getUserById(id: Int): User? {
         val seed = Random(42)
         val randomNum = seed.nextInt()
-        if (randomNum % 42 == 0) {
-            return null
-        } else {
-            return User(randomNum, "Bohan", true)
-        }
+        return if (randomNum % 42 != 0) User(randomNum, "Bohan", true) else null
     }
 
     override fun insertUser(user: User): Int {

@@ -1,7 +1,9 @@
 package org.bohan.rpc.server.worker
 
-import org.bohan.rpc.server.domain.req.RpcRequest
-import org.bohan.rpc.server.domain.resp.RpcResponse
+import org.bohan.component.common.log.Slf4j
+import org.bohan.component.common.log.Slf4j.Companion.log
+import org.bohan.rpc.contract.domain.req.RpcRequest
+import org.bohan.rpc.contract.domain.resp.RpcResponse
 import org.bohan.rpc.server.provider.ServiceProvider
 import java.io.IOException
 import java.io.ObjectInputStream
@@ -9,6 +11,7 @@ import java.io.ObjectOutputStream
 import java.lang.reflect.InvocationTargetException
 import java.net.Socket
 
+@Slf4j
 class WorkThread(
     private val socket: Socket,
     private val serviceProvider: ServiceProvider
@@ -21,6 +24,7 @@ class WorkThread(
 
             // 读取客户端传过来的 RpcRequest
             val rpcRequest = ois.readObject() as RpcRequest
+            log.info("服务端已读取客户端请求，请求内容为 $rpcRequest")
 
             // 反射调用服务方法获取返回值
             val rpcResponse = getResponse(rpcRequest)
@@ -48,11 +52,10 @@ class WorkThread(
             val invokeResult = method.invoke(service, *rpcRequest.params)
             RpcResponse.success(invokeResult)
         } catch (e: NoSuchMethodException) {
-            e.printStackTrace()
-            println("方法执行错误")
+            log.info("方法执行错误", e)
             RpcResponse.error()
         } catch (e: IllegalAccessException) {
-            e.printStackTrace()
+            log.info("非法访问错误", e)
             RpcResponse.error()
         } catch (e: InvocationTargetException) {
             e.printStackTrace()
