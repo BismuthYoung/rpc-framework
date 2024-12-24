@@ -17,8 +17,8 @@ class ClientProxy(
     override fun invoke(proxy: Any?, method: Method, args: Array<Any>): Any? {
         //构建request
         val request = RpcRequest(
-            methodName = method.declaringClass.name,
-            interfaceName = method.name,
+            methodName = method.name,
+            interfaceName = method.declaringClass.name,
             params = args,
             paramsType = method.parameterTypes
         )

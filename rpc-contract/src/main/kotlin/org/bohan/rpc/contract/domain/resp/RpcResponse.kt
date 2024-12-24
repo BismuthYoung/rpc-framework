@@ -2,13 +2,14 @@ package org.bohan.rpc.contract.domain.resp
 
 import lombok.Builder
 import org.bohan.rpc.contract.domain.enums.ResponseStatus
+import java.io.Serializable
 
 @Builder
 data class RpcResponse<T>(
     val message: String? = null,
     val status: Int? = null,
     val data: T? = null
-) {
+): Serializable {
     companion object {
         fun <T> success(): RpcResponse<T?> {
             return RpcResponse(status = ResponseStatus.SUCCESS.code, message = ResponseStatus.SUCCESS.msg)

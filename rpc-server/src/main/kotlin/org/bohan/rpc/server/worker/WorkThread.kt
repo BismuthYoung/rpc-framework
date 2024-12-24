@@ -50,6 +50,7 @@ class WorkThread(
         return try {
             val method = service::class.java.getMethod(rpcRequest.methodName, *rpcRequest.paramsType)
             val invokeResult = method.invoke(service, *rpcRequest.params)
+            log.info("方法执行结果为：$invokeResult")
             RpcResponse.success(invokeResult)
         } catch (e: NoSuchMethodException) {
             log.info("方法执行错误", e)
