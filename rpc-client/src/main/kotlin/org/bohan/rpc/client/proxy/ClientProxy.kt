@@ -1,4 +1,4 @@
-package org.bohan.rpc.client.domain.proxy
+package org.bohan.rpc.client.proxy
 
 import org.bohan.rpc.client.IOClient
 import org.bohan.rpc.client.domain.req.RpcRequest

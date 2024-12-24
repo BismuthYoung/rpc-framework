@@ -1,4 +1,4 @@
-package org.bohan.rpc.client.domain.req
+package org.bohan.rpc.server.domain.req
 
 import lombok.Builder
 import java.io.Serializable
