@@ -19,6 +19,8 @@ class WorkThread(
 
     override fun run() {
         try {
+            // 模拟数据库查询和网络时间
+            Thread.sleep(30)
             val oos = ObjectOutputStream(socket.getOutputStream())
             val ois = ObjectInputStream(socket.getInputStream())
 
