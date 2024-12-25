@@ -1,3 +1,5 @@
+package log
+
 import org.bohan.component.common.log.Slf4j
 import org.bohan.component.common.log.Slf4j.Companion.log
 import org.junit.Test

@@ -2,7 +2,7 @@ package org.bohan.rpc.client.proxy
 
 import org.bohan.component.common.log.Slf4j
 import org.bohan.component.common.log.Slf4j.Companion.log
-import org.bohan.rpc.client.IOClient
+import org.bohan.rpc.client.client.impl.IOClient
 import org.bohan.rpc.contract.domain.req.RpcRequest
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method

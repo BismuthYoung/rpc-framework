@@ -2,6 +2,7 @@ package org.bohan.rpc.client
 
 import org.bohan.component.common.log.Slf4j
 import org.bohan.component.common.log.Slf4j.Companion.log
+import org.bohan.rpc.client.client.impl.IOClient
 import org.bohan.rpc.client.proxy.ClientProxy
 import org.bohan.rpc.contract.domain.req.RpcRequest
 import org.bohan.rpc.contract.domain.resp.RpcResponse
@@ -10,10 +11,8 @@ import org.junit.Test
 import java.io.IOException
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
-import java.io.Serializable
 import java.lang.Exception
 import java.net.ServerSocket
-import java.util.concurrent.CountDownLatch
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull

@@ -21,9 +21,10 @@ subprojects {
         implementation(kotlin("stdlib"))
         // 其他公共依赖可以放在这里
         implementation("org.projectlombok:lombok:1.18.36")
-        implementation("ch.qos.logback:logback-classic:$logbackVersion") // Logback 实现
-        implementation("ch.qos.logback:logback-core:$logbackVersion")   // Logback 核心
-        implementation("org.slf4j:slf4j-api:$slf4jApiVersion")          // SLF4J API
+        implementation("ch.qos.logback:logback-classic:$logbackVersion")
+        implementation("ch.qos.logback:logback-core:$logbackVersion")
+        implementation("org.slf4j:slf4j-api:$slf4jApiVersion")
+        implementation("com.typesafe:config:1.4.2")
 
         testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.2")  // JUnit 5 API
         testImplementation("org.junit.jupiter:junit-jupiter-engine:5.7.2") // JUnit 5 Engine
