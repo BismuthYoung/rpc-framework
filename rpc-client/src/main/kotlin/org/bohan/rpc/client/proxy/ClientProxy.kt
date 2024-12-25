@@ -1,8 +1,13 @@
 package org.bohan.rpc.client.proxy
 
+import org.bohan.component.common.hocon.ConfigLoader
+import org.bohan.component.common.hocon.annotation.Config
 import org.bohan.component.common.log.Slf4j
 import org.bohan.component.common.log.Slf4j.Companion.log
 import org.bohan.rpc.client.client.impl.IOClient
+import org.bohan.rpc.client.client.impl.SimpleSocketRpcClient
+import org.bohan.rpc.client.conf.ClientConfig
+import org.bohan.rpc.client.conf.enums.ClientType
 import org.bohan.rpc.contract.domain.req.RpcRequest
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
@@ -13,7 +18,9 @@ import kotlin.NullPointerException
 @Slf4j
 class ClientProxy(
     private val host: String,
-    private val port: Int
+    private val port: Int,
+    private val clientConfig: ClientConfig = ConfigLoader.loadConfig(ClientConfig::class.java),
+    private val client: SimpleSocketRpcClient = SimpleSocketRpcClient(host, port)
 ): InvocationHandler {
 
     init {
@@ -32,7 +39,7 @@ class ClientProxy(
 
         log.info("发送请求：$request")
 
-        val response = IOClient.sendRequest(host, port, request)
+        val response = client.sendRequest(request)
             ?: throw NullPointerException("Failed to receive a response from the server for request: $request")
 
         log.info("响应内容为：$response")

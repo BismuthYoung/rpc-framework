@@ -11,6 +11,7 @@ import java.io.ObjectOutputStream
 import java.net.Socket
 
 @Slf4j
+@Deprecated("该类已弃用，请使用 SimpleSocketRpcClient 替代其功能")
 class IOClient {
 
     companion object {

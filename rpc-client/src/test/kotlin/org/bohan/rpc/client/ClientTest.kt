@@ -3,6 +3,7 @@ package org.bohan.rpc.client
 import org.bohan.component.common.log.Slf4j
 import org.bohan.component.common.log.Slf4j.Companion.log
 import org.bohan.rpc.client.client.impl.IOClient
+import org.bohan.rpc.client.client.impl.SimpleSocketRpcClient
 import org.bohan.rpc.client.proxy.ClientProxy
 import org.bohan.rpc.contract.domain.req.RpcRequest
 import org.bohan.rpc.contract.domain.resp.RpcResponse
@@ -85,6 +86,21 @@ class ClientTest {
 
         val response = IOClient.sendRequest("127.0.0.1", 9998, req)
         assertNull(response)
+    }
+
+    @Test
+    fun `test simple rpc client with valid response`() {
+        startMockServer(3876)
+        val req = RpcRequest(
+            methodName = "testMethod",
+            interfaceName = "testInterface",
+            params = arrayOf("param1"),
+            paramsType = arrayOf(String::class.java)
+        )
+
+        val response = SimpleSocketRpcClient("127.0.0.1", 3876).sendRequest(req)
+        assertNotNull(response)
+        assertEquals("Success", response.data)
     }
 
     @Test
