@@ -1,6 +1,26 @@
 plugins {
     kotlin("jvm") version "1.8.0"
     id("org.jetbrains.kotlin.plugin.allopen") version "1.8.0"
+    id("jacoco")
+}
+
+jacoco {
+    toolVersion = "0.8.8" // 使用适当的 Jacoco 版本
+}
+
+// jacoco 任务配置
+tasks.test {
+    useJUnitPlatform() // 如果你使用 JUnit 5 测试框架
+    finalizedBy("jacocoTestReport") // 确保在测试之后执行 Jacoco 报告生成
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test) // 确保在测试后生成报告
+    reports {
+        // 启用 XML 和 HTML 报告
+        xml.required.set(true)  // 使用 required() 来启用 xml 报告
+        html.required.set(true) // 使用 required() 来启用 html 报告
+    }
 }
 
 allprojects {
