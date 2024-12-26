@@ -10,11 +10,11 @@ import java.net.ServerSocket
 
 @Slf4j
 class SimpleRpcServer(
-    private val serviceProvider: ServiceProvider
+    private val serviceProvider: ServiceProvider,
+    private val serverSocket: ServerSocket
 ): RpcServer {
-    override fun start(port: Int) {
+    override fun start() {
         try {
-            val serverSocket = ServerSocket(port)
             log.info("服务已启动")
             while (true) {
                 val socket = serverSocket.accept()

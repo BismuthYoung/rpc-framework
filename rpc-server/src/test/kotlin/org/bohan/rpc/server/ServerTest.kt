@@ -1,28 +1,31 @@
 package org.bohan.rpc.server
 
-import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertNotNull
+import junit.framework.TestCase.*
 import org.bohan.component.common.log.Slf4j
-import org.bohan.component.common.log.Slf4j.Companion.log
-import org.bohan.rpc.contract.domain.entity.User
 import org.bohan.rpc.contract.domain.req.RpcRequest
 import org.bohan.rpc.contract.domain.resp.RpcResponse
 import org.bohan.rpc.contract.service.UserService
 import org.bohan.rpc.server.provider.ServiceProvider
+import org.bohan.rpc.server.server.impl.SimpleRpcServer
 import org.bohan.rpc.server.service.impl.UserServiceImpl
 import org.bohan.rpc.server.worker.WorkThread
 import org.junit.Test
 import org.mockito.Mockito
+import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
+import java.net.ServerSocket
 import java.net.Socket
 
 @Slf4j
 class ServerTest {
 
+    /**
+     * 测试 ServiceProvider 是否正确工作
+     */
     @Test
     fun providerTest() {
         val serviceProvider = ServiceProvider()
@@ -35,10 +38,13 @@ class ServerTest {
         assertEquals(userService, retrievedService) // 确保获取的服务与注入的服务一致
     }
 
+    /**
+     * 测试 WorkThread 是否正确工作
+     */
     @Test
     fun `test work thread handling rpc request`() {
         // 模拟服务容器
-        val mockServiceProvider = Mockito.mock(ServiceProvider::class.java)
+        val mockServiceProvider = mock(ServiceProvider::class.java)
 
         // 模拟用户服务，返回一个可以直接调用 sayHello 的对象
         val mockService = object : Any() {
@@ -52,7 +58,7 @@ class ServerTest {
             .thenReturn(mockService)
 
         // 模拟 socket
-        val mockSocket = Mockito.mock(Socket::class.java)
+        val mockSocket = mock(Socket::class.java)
 
         // 请求
         val rpcRequest = RpcRequest(
@@ -82,12 +88,21 @@ class ServerTest {
         assert(rpcResponse.data == "Hello, Test")
     }
 
-    private fun serialize(obj: Any): ByteArray {
-        val byteArrayOutputStream = ByteArrayOutputStream()
-        ObjectOutputStream(byteArrayOutputStream).use { it.writeObject(obj) }
-        return byteArrayOutputStream.toByteArray()
+    /**
+     * 测试基于 Socket 的单线程服务能否正常工作
+     */
+    @Test
+    fun `test simple rpc server handling rpc request`() {
+
     }
 
+    private fun serialize(obj: Any): ByteArray {
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        val objectOutputStream = ObjectOutputStream(byteArrayOutputStream)
+        objectOutputStream.writeObject(obj)
+        objectOutputStream.flush()
+        return byteArrayOutputStream.toByteArray()
+    }
     private inline fun <reified T> deserialize(byteArray: ByteArray): T {
         val byteArrayInputStream = ByteArrayInputStream(byteArray)
         return ObjectInputStream(byteArrayInputStream).use { it.readObject() as T }

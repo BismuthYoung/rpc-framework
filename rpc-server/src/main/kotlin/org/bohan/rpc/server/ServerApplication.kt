@@ -7,6 +7,7 @@ import org.bohan.rpc.server.service.impl.UserServiceImpl
 import org.bohan.rpc.server.provider.ServiceProvider
 import org.bohan.rpc.server.server.impl.SimpleRpcServer
 import org.bohan.rpc.server.server.impl.ThreadPoolRpcServer
+import java.net.ServerSocket
 
 fun main() {
     val config = ConfigLoader.loadConfig(ServerConfig::class.java)
@@ -15,10 +16,12 @@ fun main() {
     val serverProvider = ServiceProvider()
     serverProvider.provideServiceInterface(userService)
 
+    val serverSocket = ServerSocket(config.port)
+
     val rpcServer = when(ServerType.getServerEnum(config.serverType)) {
-        ServerType.SIMPLE_RPC_SERVER -> SimpleRpcServer(serverProvider)
-        ServerType.THREAD_POOL_RPC_SERVER -> ThreadPoolRpcServer(serverProvider)
+        ServerType.SIMPLE_RPC_SERVER -> SimpleRpcServer(serverProvider, serverSocket)
+        ServerType.THREAD_POOL_RPC_SERVER -> ThreadPoolRpcServer(serverProvider, serverSocket)
     }
 
-    rpcServer.start(config.port)
+    rpcServer.start()
 }

@@ -14,12 +14,12 @@ import java.util.concurrent.Executors
 @Slf4j
 class ThreadPoolRpcServer(
     private val serviceProvider: ServiceProvider,
+    private val serverSocket: ServerSocket,
     private val threadPool: ExecutorService = Executors.newFixedThreadPool(ThreadUtil.calculateThreadCountForIo(20, 2))
 ):RpcServer {
-    override fun start(port: Int) {
+    override fun start() {
         log.info("[rpc][服务端] 服务端正常启动")
         try {
-            val serverSocket = ServerSocket(port)
             while (true) {
                 val socket = serverSocket.accept()
                 threadPool.execute(WorkThread(socket, serviceProvider))
