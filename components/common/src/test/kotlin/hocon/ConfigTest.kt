@@ -3,8 +3,8 @@ package hocon
 import com.typesafe.config.ConfigFactory
 import hocon.config.ClientConfig
 import org.bohan.component.common.hocon.ConfigLoader
-import org.junit.Test
-import kotlin.test.assertEquals
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 class ConfigTest {
 
