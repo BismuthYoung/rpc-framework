@@ -32,6 +32,7 @@ subprojects {
         implementation("ch.qos.logback:logback-core:$logbackVersion")
         implementation("org.slf4j:slf4j-api:$slf4jApiVersion")
         implementation("com.typesafe:config:1.4.2")
+        implementation("io.netty:netty-all:4.1.51.Final")
 
         testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")  // JUnit 5 API
         testImplementation("org.junit.jupiter:junit-jupiter-engine:5.8.2") // JUnit 5 Engine

@@ -29,7 +29,7 @@ class WorkThread(
             log.info("服务端已读取客户端请求，请求内容为 $rpcRequest")
 
             // 反射调用服务方法获取返回值
-            val rpcResponse = getResponse(rpcRequest)
+            val rpcResponse = ThreadUtil.getResponse(serviceProvider, rpcRequest)
 
             // 向客户端写入 RpcResponse
             oos.writeObject(rpcResponse)
@@ -38,31 +38,6 @@ class WorkThread(
             e.printStackTrace()
         } catch (e: ClassNotFoundException) {
             e.printStackTrace()
-        }
-    }
-
-    private fun getResponse(rpcRequest: RpcRequest): RpcResponse<Any?> {
-        // 得到服务名
-        val interfaceName = rpcRequest.interfaceName
-
-        // 得到服务端相应服务实现类
-        val service = serviceProvider.getService(interfaceName) ?: throw IllegalArgumentException("该服务未被注册在容器中")
-
-        // 反射调用方法
-        return try {
-            val method = service::class.java.getMethod(rpcRequest.methodName, *rpcRequest.paramsType)
-            val invokeResult = method.invoke(service, *rpcRequest.params)
-            log.info("方法执行结果为：$invokeResult")
-            RpcResponse.success(invokeResult)
-        } catch (e: NoSuchMethodException) {
-            log.info("方法执行错误", e)
-            RpcResponse.error()
-        } catch (e: IllegalAccessException) {
-            log.info("非法访问错误", e)
-            RpcResponse.error()
-        } catch (e: InvocationTargetException) {
-            e.printStackTrace()
-            RpcResponse.error()
         }
     }
 
