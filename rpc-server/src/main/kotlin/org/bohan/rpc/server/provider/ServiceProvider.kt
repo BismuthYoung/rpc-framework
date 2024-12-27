@@ -23,7 +23,10 @@ class ServiceProvider {
         }
     }
 
-    fun getService(interfaceName: String): Any {
+    fun getService(interfaceName: String?): Any {
+        if (interfaceName == null) {
+            throw IllegalArgumentException("希望获取的接口名称不能为空")
+        }
         return interfaceProvider[interfaceName] ?: NullPointerException("当前尝试获取的服务名为 $interfaceName，该服务不存在。")
     }
 

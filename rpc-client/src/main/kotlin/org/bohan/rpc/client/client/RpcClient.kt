@@ -5,6 +5,6 @@ import org.bohan.rpc.contract.domain.resp.RpcResponse
 
 interface RpcClient {
 
-    fun sendRequest(request: RpcRequest): RpcResponse<*>?
+    fun sendRequest(request: RpcRequest?): RpcResponse<*>?
 
 }

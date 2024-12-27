@@ -1,14 +1,19 @@
 package org.bohan.rpc.server
 
+import io.netty.channel.ChannelFuture
+import io.netty.channel.ChannelHandlerContext
 import org.bohan.component.common.log.Slf4j
 import org.bohan.component.common.log.Slf4j.Companion.log
+import org.bohan.rpc.contract.domain.entity.User
 import org.bohan.rpc.contract.domain.req.RpcRequest
 import org.bohan.rpc.contract.domain.resp.RpcResponse
 import org.bohan.rpc.contract.service.UserService
+import org.bohan.rpc.server.netty.handler.NettyRpcServerHandler
 import org.bohan.rpc.server.provider.ServiceProvider
 import org.bohan.rpc.server.server.impl.SimpleRpcServer
 import org.bohan.rpc.server.server.impl.ThreadPoolRpcServer
 import org.bohan.rpc.server.service.impl.UserServiceImpl
+import org.bohan.rpc.server.worker.ThreadUtil
 import org.bohan.rpc.server.worker.WorkThread
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -254,6 +259,48 @@ class ServerTest {
                 Assertions.assertTrue(rpcResponse.successful())
                 Assertions.assertTrue(rpcResponse.data == "Hello, Test")
             }
+        }
+
+        @Nested
+        @DisplayName("Netty 服务端测试")
+        inner class NettyServerTest {
+            @Test
+            @Tag("正常测试")
+            @DisplayName("测试自定义请求处理器能否正常工作")
+            fun `test rpc server handler processes rpc request correctly`() {
+                val mockServiceProvider = mock(ServiceProvider::class.java)
+                val rpcRequest = RpcRequest(
+                    methodName = "getUserById",
+                    interfaceName = "org.bohan.rpc.contract.service.UserService",
+                    params = arrayOf(123),
+                    paramsType = arrayOf(Int::class.java)
+                )
+                val mockResponse: RpcResponse<Any?> = RpcResponse.success(User(id = 972016666, username = "Bohan", sex = true))
+
+                `when`(mockServiceProvider.getService(any(String::class.java)))
+                    .thenReturn(UserServiceImpl())
+                `when`(ThreadUtil.getResponse(mockServiceProvider, rpcRequest))
+                    .thenReturn(mockResponse)
+
+                val handler = NettyRpcServerHandler(mockServiceProvider)
+
+                val mockCtx = mock(ChannelHandlerContext::class.java)
+                val mockChannelFuture = mock(ChannelFuture::class.java)
+                `when`(mockCtx.writeAndFlush(any())).thenReturn(mockChannelFuture)
+
+                handler.channelRead0(mockCtx, rpcRequest)
+
+                verify(mockCtx).writeAndFlush(any(RpcResponse::class.java))
+
+                assertNotNull(mockCtx)
+            }
+        }
+
+        @Test
+        @Tag("正常测试")
+        @DisplayName("测试 netty pipeline 能否正常工作")
+        fun `netty pipeline test`() {
+
         }
     }
 

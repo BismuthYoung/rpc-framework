@@ -15,9 +15,11 @@ class SimpleSocketRpcClient(
     private val host: String,
     private val port: Int
 ): RpcClient {
-    override fun sendRequest(request: RpcRequest): RpcResponse<*>? {
+    override fun sendRequest(request: RpcRequest?): RpcResponse<*>? {
         log.info("[rpc][客户端] 进入请求发送服务")
-
+        if (request == null) {
+            throw IllegalArgumentException("待发送的请求不得为空")
+        }
         try {
             val socket = Socket(host, port)
             val oos = ObjectOutputStream(socket.getOutputStream())

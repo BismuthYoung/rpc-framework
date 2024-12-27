@@ -9,7 +9,7 @@ import org.bohan.rpc.server.worker.ThreadUtil
 class NettyRpcServerHandler(
     private val serviceProvider: ServiceProvider
 ): SimpleChannelInboundHandler<RpcRequest>() {
-    override fun channelRead0(ctx: ChannelHandlerContext?, msg: RpcRequest?) {
+    public override fun channelRead0(ctx: ChannelHandlerContext?, msg: RpcRequest?) {
         if (msg != null) {
             val response = ThreadUtil.getResponse(serviceProvider, msg)
             ctx?.writeAndFlush(response)

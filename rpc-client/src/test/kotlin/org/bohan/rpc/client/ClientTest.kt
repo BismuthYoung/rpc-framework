@@ -136,37 +136,37 @@ class ClientTest {
             assertEquals(returnUser?.id, mockUser.id)
         }
 
-//        @Test
-//        @Tag("正常测试")
-//        @DisplayName("请求构造测试")
-//        fun `request build test`() {
-//            val mockClient = mock(SimpleSocketRpcClient::class.java)
-//            val proxy = ClientProxy(mockClient)
-//            val userService = proxy.getProxy(UserService::class.java)
-//            val mockUser = User(3366, "Bohan", true)
-//
-//            // 模拟 RpcResponse
-//            val mockResponse = RpcResponse.success(mockUser)
-//            `when`(mockClient.sendRequest(any(RpcRequest::class.java))).thenReturn(mockResponse)
-//
-//            // 调用代理方法
-//            val receivedUser = userService.getUserById(3366)
-//
-//            // 捕获传递给 sendRequest 方法的 RpcRequest
-//            val captor: ArgumentCaptor<RpcRequest> = ArgumentCaptor.forClass(RpcRequest::class.java)
-//            verify(mockClient).sendRequest(captor.capture())
-//
-//            // 获取捕获到的 RpcRequest
-//            val request = captor.value
-//
-//            // 验证 RpcRequest 是否正确构造
-//            assertNotNull(request)
-//            assertEquals("getUserById", request.methodName)
-//            assertEquals("org.bohan.rpc.contract.service.UserService", request.interfaceName)
-//            assertEquals(1, request.params.size)
-//            assertEquals(3366, request.params[0])
-//            assertEquals(Int::class.java, request.paramsType[0])
-//        }
+        @Test
+        @Tag("正常测试")
+        @DisplayName("请求构造测试")
+        fun `request build test`() {
+            val mockClient = mock(SimpleSocketRpcClient::class.java)
+            val proxy = ClientProxy(mockClient)
+            val userService = proxy.getProxy(UserService::class.java)
+            val mockUser = User(3366, "Bohan", true)
+
+            // 模拟 RpcResponse
+            val mockResponse = RpcResponse.success(mockUser)
+            `when`(mockClient.sendRequest(any(RpcRequest::class.java))).thenReturn(mockResponse)
+
+            // 调用代理方法
+            val receivedUser = userService.getUserById(3366)
+
+            // 捕获传递给 sendRequest 方法的 RpcRequest
+            val captor: ArgumentCaptor<RpcRequest> = ArgumentCaptor.forClass(RpcRequest::class.java)
+            verify(mockClient).sendRequest(captor.capture())
+
+            // 获取捕获到的 RpcRequest
+            val request = captor.value
+
+            // 验证 RpcRequest 是否正确构造
+            assertNotNull(request)
+            assertEquals("getUserById", request.methodName)
+            assertEquals("org.bohan.rpc.contract.service.UserService", request.interfaceName)
+            assertEquals(1, request.params.size)
+            assertEquals(3366, request.params[0])
+            assertEquals(Int::class.java, request.paramsType[0])
+        }
 
     }
 

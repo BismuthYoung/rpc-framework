@@ -1,7 +1,6 @@
 package org.bohan.rpc.server.server.impl
 
 import io.netty.bootstrap.ServerBootstrap
-import io.netty.channel.nio.NioEventLoop
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.nio.NioServerSocketChannel
 import org.bohan.component.common.log.Slf4j.Companion.log
@@ -37,6 +36,5 @@ class NettyRpcServer(
     }
 
     override fun stop() {
-        TODO("Not yet implemented")
     }
 }
