@@ -300,6 +300,25 @@ class ServerTest {
         @Tag("正常测试")
         @DisplayName("测试 netty pipeline 能否正常工作")
         fun `netty pipeline test`() {
+            // 模拟服务容器
+            val mockServiceProvider = mock(ServiceProvider::class.java)
+            // 模拟用户服务，返回一个可以直接调用 sayHello 的对象
+            val mockService = object : Any() {
+                fun sayHello(name: String): String {
+                    return "Hello, $name"
+                }
+            }
+            // 当 ServiceProvider 获取到 "TestService" 时返回 mockService
+            `when`(mockServiceProvider.getService("TestService"))
+                .thenReturn(mockService)
+
+
+        }
+
+        @Test
+        @Tag("正常测试")
+        @DisplayName("测试 netty 服务端能否处理正常请求")
+        fun `netty server handling correct request test`() {
 
         }
     }

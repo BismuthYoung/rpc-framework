@@ -14,7 +14,6 @@ class ServiceProvider {
     private val interfaceProvider = mutableMapOf<String, Any>()
 
     fun provideServiceInterface(service: Any) {
-        val serviceName = service::class.java.name
         val interfaceName = service::class.java.interfaces
 
         interfaceName.forEach { interfaceClazz ->

@@ -8,5 +8,9 @@ class ClientConfig {
     private lateinit var config: com.typesafe.config.Config
 
     val clientType: String
-        get() = config.getString("type")
+        get() = config.getString("type") ?: throw NoSuchElementException("该配置不存在")
+    val host: String
+        get() = config.getString("host") ?: throw NoSuchElementException("该配置不存在")
+    val port: Int
+        get() = config.getInt("port") ?: throw NoSuchElementException("该配置不存在")
 }

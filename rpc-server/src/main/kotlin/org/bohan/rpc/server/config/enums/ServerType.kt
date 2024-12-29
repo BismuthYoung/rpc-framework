@@ -4,7 +4,9 @@ enum class ServerType(val serverName: String) {
 
     SIMPLE_RPC_SERVER("simple"),
 
-    THREAD_POOL_RPC_SERVER("thread");
+    THREAD_POOL_RPC_SERVER("thread"),
+
+    NETTY_RPC_SERVER("netty");
 
     companion object {
         fun getServerEnum(serverName: String): ServerType {
