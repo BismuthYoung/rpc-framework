@@ -13,7 +13,6 @@ tasks.test {
 allprojects {
     repositories {
         mavenCentral()
-        jcenter()
     }
 }
 
@@ -33,6 +32,8 @@ subprojects {
         implementation("org.slf4j:slf4j-api:$slf4jApiVersion")
         implementation("com.typesafe:config:1.4.2")
         implementation("io.netty:netty-all:4.1.51.Final")
+        implementation("org.apache.curator:apache-curator:5.1.0")
+
 
         testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")  // JUnit 5 API
         testImplementation("org.junit.jupiter:junit-jupiter-engine:5.8.2") // JUnit 5 Engine
