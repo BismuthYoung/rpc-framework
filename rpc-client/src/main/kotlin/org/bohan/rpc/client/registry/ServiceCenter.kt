@@ -4,6 +4,6 @@ import java.net.InetSocketAddress
 
 interface ServiceCenter {
 
-    fun serviceDiscovery(serviceName: String): InetSocketAddress
+    fun serviceDiscovery(serviceName: String): InetSocketAddress?
 
 }

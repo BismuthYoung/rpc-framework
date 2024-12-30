@@ -1,16 +1,16 @@
-package org.bohan.rpc.server.registry.impl
+package org.bohan.rpc.client.registry.impl
 
 import org.apache.curator.framework.CuratorFramework
 import org.apache.curator.framework.CuratorFrameworkFactory
 import org.apache.curator.retry.ExponentialBackoffRetry
-import org.apache.zookeeper.CreateMode
 import org.bohan.component.common.log.Slf4j
 import org.bohan.component.common.log.Slf4j.Companion.log
-import org.bohan.rpc.server.registry.ServiceRegister
+import org.bohan.rpc.client.registry.ServiceCenter
 import java.net.InetSocketAddress
+import java.util.NoSuchElementException
 
 @Slf4j
-class ZkServiceRegister: ServiceRegister {
+class ZkServiceCenter: ServiceCenter {
 
     private val client: CuratorFramework
 
@@ -31,27 +31,15 @@ class ZkServiceRegister: ServiceRegister {
         log.info("[rpc][服务端] zookeeper 连接成功")
     }
 
-    override fun register(serviceName: String, serviceAddress: InetSocketAddress) {
-        log.info("[rpc][服务端] 进入 zookeeper 节点注册方法")
-        try {
-            // serviceName 创建成永久节点，服务提供者下线时，不删服务名，只删地址
-            if (client.checkExists().forPath("/$serviceName") == null) {
-                log.info("[rpc][服务端] zookeeper 节点不存在，开始节点创建")
-                client.create()
-                    .creatingParentsIfNeeded()
-                    .withMode(CreateMode.PERSISTENT)
-                    .forPath("/$serviceName")
-                log.info("[rpc][服务端] zookeeper 节点创建完毕")
-            }
+    override fun serviceDiscovery(serviceName: String): InetSocketAddress? {
+        return try {
+            val addressStringList = client.children.forPath("/$serviceName")
+            val addressString = addressStringList.first() ?: throw NoSuchElementException("当前服务不存在线上节点")
 
-            val path = "/$serviceName/${getServiceAddress(serviceAddress)}"
-
-            client.create()
-                .creatingParentsIfNeeded()
-                .withMode(CreateMode.EPHEMERAL)
-                .forPath(path)
+            parseAddress(addressString)
         } catch (e: Exception) {
-            log.error("zookeeper 出现问题", e)
+            log.error("[rpc][客户端] zookeeper 连接出现异常", e)
+            null
         }
     }
 
@@ -64,5 +52,4 @@ class ZkServiceRegister: ServiceRegister {
         val result = address.split(":")
         return InetSocketAddress(result[0], result[1].toInt())
     }
-
 }
