@@ -5,6 +5,8 @@ import org.bohan.rpc.server.config.ServerConfig
 import org.bohan.rpc.server.config.enums.ServerType
 import org.bohan.rpc.server.service.impl.UserServiceImpl
 import org.bohan.rpc.server.provider.ServiceProvider
+import org.bohan.rpc.server.registry.ServiceRegister
+import org.bohan.rpc.server.registry.impl.ZkServiceRegister
 import org.bohan.rpc.server.server.impl.NettyRpcServer
 import org.bohan.rpc.server.server.impl.SimpleRpcServer
 import org.bohan.rpc.server.server.impl.ThreadPoolRpcServer
@@ -13,8 +15,9 @@ import java.net.ServerSocket
 fun main() {
     val config = ConfigLoader.loadConfig(ServerConfig::class.java)
     val userService = UserServiceImpl()
+    val serviceRegister = ZkServiceRegister()
 
-    val serviceProvider = ServiceProvider()
+    val serviceProvider = ServiceProvider(config.host, config.port, serviceRegister)
     serviceProvider.provideServiceInterface(userService)
 
     val rpcServer = when(ServerType.getServerEnum(config.serverType)) {

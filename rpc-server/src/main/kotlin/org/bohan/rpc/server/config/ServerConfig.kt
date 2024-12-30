@@ -12,4 +12,7 @@ class ServerConfig {
 
     val port: Int
         get() = config.getInt("port")
+
+    val host: String
+        get() = config.getString("host")
 }
