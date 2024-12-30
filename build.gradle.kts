@@ -1,7 +1,6 @@
 plugins {
     kotlin("jvm") version "1.8.0"
     id("org.jetbrains.kotlin.plugin.allopen") version "1.8.0"
-    id("java")  // 添加这个插件来支持 Java 测试框架
 }
 
 
@@ -32,8 +31,9 @@ subprojects {
         implementation("org.slf4j:slf4j-api:$slf4jApiVersion")
         implementation("com.typesafe:config:1.4.2")
         implementation("io.netty:netty-all:4.1.51.Final")
-        implementation("org.apache.curator:apache-curator:5.1.0")
-
+        implementation("org.apache.curator:apache-curator:5.7.1")
+        implementation("org.apache.curator:curator-framework:5.7.1")
+        implementation("org.apache.curator:curator-recipes:5.7.1")
 
         testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")  // JUnit 5 API
         testImplementation("org.junit.jupiter:junit-jupiter-engine:5.8.2") // JUnit 5 Engine
