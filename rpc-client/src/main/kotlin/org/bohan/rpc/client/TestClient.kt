@@ -8,7 +8,6 @@ import org.bohan.rpc.client.conf.enums.ClientType
 import org.bohan.rpc.client.proxy.ClientProxy
 import org.bohan.rpc.client.registry.impl.ZkServiceCenter
 import org.bohan.rpc.contract.service.UserService
-import org.slf4j.LoggerFactory
 
 
 fun main() {
