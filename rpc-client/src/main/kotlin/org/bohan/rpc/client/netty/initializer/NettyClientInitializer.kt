@@ -8,6 +8,9 @@ import io.netty.handler.codec.serialization.ClassResolver
 import io.netty.handler.codec.serialization.ObjectDecoder
 import io.netty.handler.codec.serialization.ObjectEncoder
 import org.bohan.rpc.client.netty.handler.NettyClientHandler
+import org.bohan.rpc.contract.transformer.codec.NettyDecoder
+import org.bohan.rpc.contract.transformer.codec.NettyEncoder
+import org.bohan.rpc.contract.transformer.serializer.impl.JsonSerializer
 
 class NettyClientInitializer: ChannelInitializer<SocketChannel>() {
     override fun initChannel(ch: SocketChannel?) {
@@ -27,21 +30,21 @@ class NettyClientInitializer: ChannelInitializer<SocketChannel>() {
         //  4. lengthAdjustment: 该参数用于调整从长度字段到消息体的偏移量。
         //  5. initialBytesToStrip: 该参数指定解码器应该跳过的初始字节数。
         channelPipeline?.addLast(
-            LengthFieldBasedFrameDecoder(Int.MAX_VALUE, 0, 4, 0, 4)
+            NettyDecoder()
         )
         //计算当前待发送消息的长度，写入到前4个字节中
-        channelPipeline?.addLast(LengthFieldPrepender(4))
+//        channelPipeline?.addLast(LengthFieldPrepender(4))
 
         //使用Java序列化方式，netty的自带的解码编码支持传输这种结构
-        channelPipeline?.addLast(ObjectEncoder())
+        channelPipeline?.addLast(NettyEncoder(JsonSerializer()))
 
         //使用了Netty中的ObjectDecoder，它用于将字节流解码为 Java 对象。
         //在ObjectDecoder的构造函数中传入了一个ClassResolver 对象，用于解析类名并加载相应的类。
-        channelPipeline?.addLast(
-            ObjectDecoder(ClassResolver {
-                Class.forName(it)
-            })
-        )
+//        channelPipeline?.addLast(
+//            ObjectDecoder {
+//                Class.forName(it)
+//            }
+//        )
 
         channelPipeline?.addLast(NettyClientHandler())
     }

@@ -9,7 +9,7 @@ import org.bohan.rpc.contract.domain.req.RpcRequest
 import org.bohan.rpc.contract.domain.resp.RpcResponse
 import org.bohan.rpc.contract.service.UserService
 import org.bohan.rpc.server.netty.handler.NettyRpcServerHandler
-import org.bohan.rpc.server.provider.ServiceProvider
+import org.bohan.rpc.server.provider.impl.SimpleServiceProvider
 import org.bohan.rpc.server.server.impl.SimpleRpcServer
 import org.bohan.rpc.server.server.impl.ThreadPoolRpcServer
 import org.bohan.rpc.server.service.impl.UserServiceImpl
@@ -44,7 +44,7 @@ class ServerTest {
         @Tag("正常测试")
         @DisplayName("测试服务容器能否正常工作")
         fun providerTest() {
-            val serviceProvider = ServiceProvider()
+            val serviceProvider = SimpleServiceProvider()
             val userService = UserServiceImpl()
             serviceProvider.provideServiceInterface(userService)
 
@@ -62,7 +62,7 @@ class ServerTest {
         @DisplayName("测试工作线程能否正常工作")
         fun `test work thread handling rpc request`() {
             // 模拟服务容器
-            val mockServiceProvider = mock(ServiceProvider::class.java)
+            val mockServiceProvider = mock(SimpleServiceProvider::class.java)
 
             // 模拟用户服务，返回一个可以直接调用 sayHello 的对象
             val mockService = object : Any() {
@@ -115,7 +115,7 @@ class ServerTest {
         @DisplayName("测试基于 Socket 的单线程服务能否正常工作")
         fun `test simple rpc server handling rpc request`() {
             // 模拟服务容器
-            val mockServiceProvider = mock(ServiceProvider::class.java)
+            val mockServiceProvider = mock(SimpleServiceProvider::class.java)
 
             // 模拟用户服务，返回一个可以直接调用 sayHello 的对象
             val mockService = object : Any() {
@@ -192,7 +192,7 @@ class ServerTest {
             @DisplayName("测试基于 Socket 的单线程服务能否正常工作")
             fun `test simple rpc server handling rpc request`() {
                 // 模拟服务容器
-                val mockServiceProvider = mock(ServiceProvider::class.java)
+                val mockServiceProvider = mock(SimpleServiceProvider::class.java)
 
                 // 模拟用户服务，返回一个可以直接调用 sayHello 的对象
                 val mockService = object : Any() {
@@ -268,7 +268,7 @@ class ServerTest {
             @Tag("正常测试")
             @DisplayName("测试自定义请求处理器能否正常工作")
             fun `test rpc server handler processes rpc request correctly`() {
-                val mockServiceProvider = mock(ServiceProvider::class.java)
+                val mockServiceProvider = mock(SimpleServiceProvider::class.java)
                 val rpcRequest = RpcRequest(
                     methodName = "getUserById",
                     interfaceName = "org.bohan.rpc.contract.service.UserService",
@@ -301,7 +301,7 @@ class ServerTest {
         @DisplayName("测试 netty pipeline 能否正常工作")
         fun `netty pipeline test`() {
             // 模拟服务容器
-            val mockServiceProvider = mock(ServiceProvider::class.java)
+            val mockServiceProvider = mock(SimpleServiceProvider::class.java)
             // 模拟用户服务，返回一个可以直接调用 sayHello 的对象
             val mockService = object : Any() {
                 fun sayHello(name: String): String {

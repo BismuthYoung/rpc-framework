@@ -7,12 +7,11 @@ import io.netty.channel.socket.nio.NioServerSocketChannel
 import org.bohan.component.common.log.Slf4j
 import org.bohan.component.common.log.Slf4j.Companion.log
 import org.bohan.rpc.server.netty.initializer.NettyServerInitializer
-import org.bohan.rpc.server.provider.ServiceProvider
 import org.bohan.rpc.server.server.RpcServer
 
 @Slf4j
 class NettyRpcServer(
-    private val serviceProvider: ServiceProvider,
+    private val serviceProvider: org.bohan.rpc.server.provider.ServiceProvider,
     private val port: Int
 ): RpcServer {
     override fun start() {

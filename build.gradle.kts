@@ -34,6 +34,7 @@ subprojects {
         implementation("org.apache.curator:apache-curator:5.7.1")
         implementation("org.apache.curator:curator-framework:5.7.1")
         implementation("org.apache.curator:curator-recipes:5.7.1")
+        implementation("com.alibaba:fastjson:2.0.53")
 
         testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")  // JUnit 5 API
         testImplementation("org.junit.jupiter:junit-jupiter-engine:5.8.2") // JUnit 5 Engine

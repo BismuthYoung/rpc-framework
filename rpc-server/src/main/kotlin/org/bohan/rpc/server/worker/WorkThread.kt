@@ -3,18 +3,15 @@ package org.bohan.rpc.server.worker
 import org.bohan.component.common.log.Slf4j
 import org.bohan.component.common.log.Slf4j.Companion.log
 import org.bohan.rpc.contract.domain.req.RpcRequest
-import org.bohan.rpc.contract.domain.resp.RpcResponse
-import org.bohan.rpc.server.provider.ServiceProvider
 import java.io.IOException
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
-import java.lang.reflect.InvocationTargetException
 import java.net.Socket
 
 @Slf4j
 class WorkThread(
     private val socket: Socket,
-    private val serviceProvider: ServiceProvider
+    private val serviceProvider: org.bohan.rpc.server.provider.ServiceProvider
 ): Runnable {
 
     override fun run() {

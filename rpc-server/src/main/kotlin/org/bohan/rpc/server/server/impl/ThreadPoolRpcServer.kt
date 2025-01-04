@@ -2,7 +2,6 @@ package org.bohan.rpc.server.server.impl
 
 import org.bohan.component.common.log.Slf4j
 import org.bohan.component.common.log.Slf4j.Companion.log
-import org.bohan.rpc.server.provider.ServiceProvider
 import org.bohan.rpc.server.server.RpcServer
 import org.bohan.rpc.server.worker.ThreadUtil
 import org.bohan.rpc.server.worker.WorkThread
@@ -13,7 +12,7 @@ import java.util.concurrent.Executors
 
 @Slf4j
 class ThreadPoolRpcServer(
-    private val serviceProvider: ServiceProvider,
+    private val serviceProvider: org.bohan.rpc.server.provider.ServiceProvider,
     private val serverSocket: ServerSocket,
     private val threadPool: ExecutorService = Executors.newFixedThreadPool(ThreadUtil.calculateThreadCountForIo(20, 2))
 ):RpcServer {
