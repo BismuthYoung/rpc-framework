@@ -3,6 +3,7 @@ package org.bohan.rpc.server.worker
 import org.bohan.component.common.log.Slf4j.Companion.log
 import org.bohan.rpc.contract.domain.req.RpcRequest
 import org.bohan.rpc.contract.domain.resp.RpcResponse
+import org.bohan.rpc.server.provider.ServiceProvider
 import java.lang.reflect.InvocationTargetException
 
 class ThreadUtil {
@@ -13,12 +14,12 @@ class ThreadUtil {
             return (cpuCores * (1 + waitTime.toDouble() / calculateTime)).toInt()
         }
 
-         fun getResponse(serviceProvider: org.bohan.rpc.server.provider.ServiceProvider, rpcRequest: RpcRequest): RpcResponse<Any?> {
+         fun getResponse(serviceProvider: ServiceProvider, rpcRequest: RpcRequest): RpcResponse<Any?> {
             // 得到服务名
             val interfaceName = rpcRequest.interfaceName
 
             // 得到服务端相应服务实现类
-            val service = serviceProvider.getService(interfaceName) ?: throw IllegalArgumentException("该服务未被注册在容器中")
+            val service = serviceProvider.getService(interfaceName)
 
             // 反射调用方法
             return try {
