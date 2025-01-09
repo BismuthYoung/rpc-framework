@@ -6,4 +6,6 @@ interface ServiceCenter {
 
     fun serviceDiscovery(serviceName: String): InetSocketAddress?
 
+    fun checkRetry(serviceName: String): Boolean
+
 }

@@ -17,6 +17,7 @@ class RpcRequestRetryHandler(
     fun sendRequestWithRetry(request: RpcRequest): RpcResponse<*> {
         val retryStrategy = RetryerBuilder.newBuilder<RpcResponse<*>>()
             .retryIfException()
+            .retryIfResult { it == null }
             .retryIfResult { response -> response.status != ResponseStatus.SUCCESS.code }
             .withWaitStrategy(WaitStrategies.fixedWait(2, TimeUnit.SECONDS))
             .withStopStrategy(StopStrategies.stopAfterAttempt(5))
@@ -31,7 +32,7 @@ class RpcRequestRetryHandler(
             retryStrategy.call { rpcClient.sendRequest(request) }
         } catch (e: Exception) {
             log.error("[rpc][客户端] 重试机制出现异常")
-            RpcResponse.error<Any>("出现异常")
+            RpcResponse.error<Any>("重试机制出现异常")
         }
     }
 

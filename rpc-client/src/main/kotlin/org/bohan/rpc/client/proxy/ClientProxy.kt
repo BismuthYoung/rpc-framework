@@ -1,28 +1,22 @@
 package org.bohan.rpc.client.proxy
 
-import org.bohan.component.common.hocon.ConfigLoader
-import org.bohan.component.common.hocon.annotation.Config
 import org.bohan.component.common.log.Slf4j
 import org.bohan.component.common.log.Slf4j.Companion.log
 import org.bohan.rpc.client.client.RpcClient
-import org.bohan.rpc.client.client.impl.IOClient
-import org.bohan.rpc.client.client.impl.SimpleSocketRpcClient
-import org.bohan.rpc.client.conf.ClientConfig
-import org.bohan.rpc.client.conf.enums.ClientType
 import org.bohan.rpc.client.proxy.breaker.SimpleCircuitBreakerProvider
 import org.bohan.rpc.client.proxy.retry.RpcRequestRetryHandler
 import org.bohan.rpc.contract.domain.req.RpcRequest
+import org.bohan.rpc.contract.domain.resp.RpcResponse
 import java.lang.IllegalStateException
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
 import kotlin.NullPointerException
 
-
 @Slf4j
 class ClientProxy(
     private val client: RpcClient,
-    private val circuitBreakerProvider: SimpleCircuitBreakerProvider
+    private val circuitBreakerProvider: SimpleCircuitBreakerProvider,
 ): InvocationHandler {
 
     //jdk动态代理，每一次代理对象调用方法，都会经过此方法增强（反射获取request对象，socket发送到服务端）
@@ -39,9 +33,20 @@ class ClientProxy(
             throw IllegalStateException("当前请求服务已熔断")
         }
 
-        log.info("发送请求：$request")
-        val response = RpcRequestRetryHandler(client).sendRequestWithRetry(request)
-        log.info("响应内容为：$response")
+        val serviceCenter = client.getServiceCenter()
+        val response: RpcResponse<*>
+        if (serviceCenter == null) {
+            log.info("[rpc][客户端] SimpleRpcClient 发送请求：$request")
+            response = client.sendRequest(request) ?: throw NullPointerException("未能收到服务器对请求的响应: $request")
+            log.info("[rpc][客户端] 响应内容为：$response")
+
+        } else {
+            log.info("发送请求：$request")
+            response = if (serviceCenter.checkRetry(method.declaringClass.name))
+                RpcRequestRetryHandler(client).sendRequestWithRetry(request) else
+                client.sendRequest(request) ?: throw NullPointerException("未能收到服务器对请求的响应: $request")
+            log.info("响应内容为：$response")
+        }
 
         // 记录请求状态
         if (response.successful()) {

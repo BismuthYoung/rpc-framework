@@ -21,7 +21,7 @@ fun main() {
 
     val zkServiceProvider = ZkServiceProvider(config.host, config.port, serviceRegister, rateLimiterProvider)
     val simpleServiceProvider = SimpleServiceProvider(rateLimiterProvider)
-    zkServiceProvider.provideServiceInterface(userService)
+    zkServiceProvider.providerServiceInterface(userService, true)
     simpleServiceProvider.provideServiceInterface(userService)
 
     val rpcServer = when(ServerType.getServerEnum(config.serverType)) {

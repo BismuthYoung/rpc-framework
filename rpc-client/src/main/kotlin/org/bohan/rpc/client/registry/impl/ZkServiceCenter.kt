@@ -8,6 +8,7 @@ import org.bohan.component.common.log.Slf4j
 import org.bohan.component.common.log.Slf4j.Companion.log
 import org.bohan.rpc.client.cache.impl.SimpleServiceCache
 import org.bohan.rpc.client.conf.ClientConfig
+import org.bohan.rpc.client.conf.ZkConfig
 import org.bohan.rpc.client.conf.enums.BalanceStrategy
 import org.bohan.rpc.client.registry.ServiceCenter
 import org.bohan.rpc.client.registry.ZkServiceMonitor
@@ -21,20 +22,17 @@ class ZkServiceCenter: ServiceCenter {
 
     private val cache: SimpleServiceCache
 
-    private val config = ConfigLoader.loadConfig(ClientConfig::class.java)
+    private val clientConfig = ConfigLoader.loadConfig(ClientConfig::class.java)
 
-    companion object {
-        private const val ROOT_PATH = "rpc-frame"
-        private const val ZK_ROOT_PATH = "/"
-    }
+    private val zkConfig = ConfigLoader.loadConfig(ZkConfig::class.java)
 
     init {
         val policy = ExponentialBackoffRetry(1000, 3)
         client = CuratorFrameworkFactory.builder()
-            .connectString("127.0.0.1:2181")
+            .connectString(zkConfig.zookeeperAddress)
             .sessionTimeoutMs(40000)
             .retryPolicy(policy)
-            .namespace(ROOT_PATH)
+            .namespace(zkConfig.projectRootPath)
             .build()
 
         client.start()
@@ -43,7 +41,7 @@ class ZkServiceCenter: ServiceCenter {
         // 后续可能需要修改
         cache = SimpleServiceCache()
         val monitor = ZkServiceMonitor(client, cache)
-        monitor.watchToUpdate(ZK_ROOT_PATH)
+        monitor.watchToUpdate(zkConfig.zkRootPath)
     }
 
     override fun serviceDiscovery(serviceName: String): InetSocketAddress? {
@@ -56,7 +54,7 @@ class ZkServiceCenter: ServiceCenter {
                 addressStringList = client.children.forPath("/$serviceName")
                 log.info("[rpc][客户端] 缓存为空，从 zk 中找到的服务信息为 $addressStringList")
             }
-            val addressString = BalanceStrategy.getStrategyByName(config.balanceStrategy).selectServer(addressStringList)
+            val addressString = BalanceStrategy.getStrategyByName(clientConfig.balanceStrategy).selectServer(addressStringList)
                 ?: throw NoSuchElementException("当前服务不存在线上节点")
 
             parseAddress(addressString)
@@ -64,6 +62,18 @@ class ZkServiceCenter: ServiceCenter {
             log.error("[rpc][客户端] zookeeper 连接出现异常", e)
             null
         }
+    }
+
+    override fun checkRetry(serviceName: String): Boolean {
+        var canRetry = false
+        try {
+            val result = client.children.forPath("/${zkConfig.retryPath}").find { it == serviceName }
+            canRetry = result != null
+        } catch (e: Exception) {
+            log.error("[rpc][客户端] zookeeper 连接出现异常", e)
+        }
+        log.debug("[rpc][服务端] 该服务是否支持重试：$canRetry")
+        return canRetry
     }
 
     private fun getServiceAddress(serverAddress: InetSocketAddress): String {

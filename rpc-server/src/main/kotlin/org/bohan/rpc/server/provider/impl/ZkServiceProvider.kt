@@ -20,14 +20,14 @@ class ZkServiceProvider(
     // 集合中存放服务的实例
     private val interfaceProvider = mutableMapOf<String, Any>()
 
-    override fun provideServiceInterface(service: Any) {
+    override fun providerServiceInterface(service: Any, canRetry: Boolean) {
         val interfaceName = service::class.java.interfaces
 
         interfaceName.forEach { interfaceClazz ->
             // 本机映射表
             interfaceProvider[interfaceClazz.name] = service
             // 在注册中心注册服务
-            serviceRegister.register(interfaceClazz.name, InetSocketAddress(host, port))
+            serviceRegister.register(interfaceClazz.name, InetSocketAddress(host, port), canRetry)
             log.debug("当前服务容器注册键为 {}，值为 {} 的项", interfaceClazz.name, service)
         }
     }

@@ -55,5 +55,8 @@ class NettyRpcClient(
         }
     }
 
+    override fun getServiceCenter(): ServiceCenter {
+        return serviceCenter
+    }
 
 }
