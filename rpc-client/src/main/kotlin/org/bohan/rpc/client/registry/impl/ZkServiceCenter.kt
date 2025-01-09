@@ -3,9 +3,12 @@ package org.bohan.rpc.client.registry.impl
 import org.apache.curator.framework.CuratorFramework
 import org.apache.curator.framework.CuratorFrameworkFactory
 import org.apache.curator.retry.ExponentialBackoffRetry
+import org.bohan.component.common.hocon.ConfigLoader
 import org.bohan.component.common.log.Slf4j
 import org.bohan.component.common.log.Slf4j.Companion.log
 import org.bohan.rpc.client.cache.impl.SimpleServiceCache
+import org.bohan.rpc.client.conf.ClientConfig
+import org.bohan.rpc.client.conf.enums.BalanceStrategy
 import org.bohan.rpc.client.registry.ServiceCenter
 import org.bohan.rpc.client.registry.ZkServiceMonitor
 import java.net.InetSocketAddress
@@ -17,6 +20,8 @@ class ZkServiceCenter: ServiceCenter {
     private val client: CuratorFramework
 
     private val cache: SimpleServiceCache
+
+    private val config = ConfigLoader.loadConfig(ClientConfig::class.java)
 
     companion object {
         private const val ROOT_PATH = "rpc-frame"
@@ -51,7 +56,8 @@ class ZkServiceCenter: ServiceCenter {
                 addressStringList = client.children.forPath("/$serviceName")
                 log.info("[rpc][客户端] 缓存为空，从 zk 中找到的服务信息为 $addressStringList")
             }
-            val addressString = addressStringList.first() ?: throw NoSuchElementException("当前服务不存在线上节点")
+            val addressString = BalanceStrategy.getStrategyByName(config.balanceStrategy).selectServer(addressStringList)
+                ?: throw NoSuchElementException("当前服务不存在线上节点")
 
             parseAddress(addressString)
         } catch (e: Exception) {
