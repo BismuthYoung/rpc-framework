@@ -9,6 +9,7 @@ import org.bohan.rpc.client.client.impl.IOClient
 import org.bohan.rpc.client.client.impl.SimpleSocketRpcClient
 import org.bohan.rpc.client.conf.ClientConfig
 import org.bohan.rpc.client.conf.enums.ClientType
+import org.bohan.rpc.client.proxy.retry.RpcRequestRetryHandler
 import org.bohan.rpc.contract.domain.req.RpcRequest
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
@@ -32,8 +33,7 @@ class ClientProxy(
 
         log.info("发送请求：$request")
 
-        val response = client.sendRequest(request)
-            ?: throw NullPointerException("未能收到服务器对请求的响应: $request")
+        val response = RpcRequestRetryHandler(client).sendRequestWithRetry(request)
 
         log.info("响应内容为：$response")
 

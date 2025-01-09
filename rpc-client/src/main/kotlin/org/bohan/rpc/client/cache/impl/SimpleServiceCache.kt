@@ -3,7 +3,6 @@ package org.bohan.rpc.client.cache.impl
 import org.bohan.component.common.log.Slf4j
 import org.bohan.component.common.log.Slf4j.Companion.log
 import org.bohan.rpc.client.cache.ServiceCache
-import java.util.NoSuchElementException
 
 @Slf4j
 class SimpleServiceCache: ServiceCache {
