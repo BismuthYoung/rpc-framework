@@ -14,10 +14,15 @@ class ThreadUtil {
             return (cpuCores * (1 + waitTime.toDouble() / calculateTime)).toInt()
         }
 
-         fun getResponse(serviceProvider: ServiceProvider, rpcRequest: RpcRequest): RpcResponse<Any?> {
+        fun getResponse(serviceProvider: ServiceProvider, rpcRequest: RpcRequest): RpcResponse<Any?> {
             // 得到服务名
             val interfaceName = rpcRequest.interfaceName
-
+            // 检验是否限流
+            val limiter = serviceProvider.getRateLimiter(interfaceName)
+            if (! limiter.getToken()) {
+                log.error("[rpc][服务端] 服务限流")
+                return RpcResponse.error("服务限流")
+            }
             // 得到服务端相应服务实现类
             val service = serviceProvider.getService(interfaceName)
 

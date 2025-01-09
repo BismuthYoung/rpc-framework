@@ -10,15 +10,17 @@ import org.bohan.rpc.server.registry.impl.ZkServiceRegister
 import org.bohan.rpc.server.server.impl.NettyRpcServer
 import org.bohan.rpc.server.server.impl.SimpleRpcServer
 import org.bohan.rpc.server.server.impl.ThreadPoolRpcServer
+import org.bohan.rpc.server.worker.rateLimit.provider.RateLimiterProvider
 import java.net.ServerSocket
 
 fun main() {
     val config = ConfigLoader.loadConfig(ServerConfig::class.java)
     val userService = UserServiceImpl()
     val serviceRegister = ZkServiceRegister()
+    val rateLimiterProvider = RateLimiterProvider()
 
-    val zkServiceProvider = ZkServiceProvider(config.host, config.port, serviceRegister)
-    val simpleServiceProvider = SimpleServiceProvider()
+    val zkServiceProvider = ZkServiceProvider(config.host, config.port, serviceRegister, rateLimiterProvider)
+    val simpleServiceProvider = SimpleServiceProvider(rateLimiterProvider)
     zkServiceProvider.provideServiceInterface(userService)
     simpleServiceProvider.provideServiceInterface(userService)
 

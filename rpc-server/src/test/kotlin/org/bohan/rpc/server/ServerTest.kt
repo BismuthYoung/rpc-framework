@@ -15,6 +15,7 @@ import org.bohan.rpc.server.server.impl.ThreadPoolRpcServer
 import org.bohan.rpc.server.service.impl.UserServiceImpl
 import org.bohan.rpc.server.worker.ThreadUtil
 import org.bohan.rpc.server.worker.WorkThread
+import org.bohan.rpc.server.worker.rateLimit.provider.RateLimiterProvider
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -44,7 +45,8 @@ class ServerTest {
         @Tag("正常测试")
         @DisplayName("测试服务容器能否正常工作")
         fun providerTest() {
-            val serviceProvider = SimpleServiceProvider()
+            val rateLimiterProvider = RateLimiterProvider()
+            val serviceProvider = SimpleServiceProvider(rateLimiterProvider)
             val userService = UserServiceImpl()
             serviceProvider.provideServiceInterface(userService)
 

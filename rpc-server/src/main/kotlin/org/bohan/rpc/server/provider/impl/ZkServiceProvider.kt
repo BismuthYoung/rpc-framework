@@ -4,6 +4,8 @@ import org.bohan.component.common.log.Slf4j
 import org.bohan.component.common.log.Slf4j.Companion.log
 import org.bohan.rpc.server.provider.ServiceProvider
 import org.bohan.rpc.server.registry.ServiceRegister
+import org.bohan.rpc.server.worker.rateLimit.RateLimiter
+import org.bohan.rpc.server.worker.rateLimit.provider.RateLimiterProvider
 import java.lang.NullPointerException
 import java.net.InetSocketAddress
 
@@ -11,7 +13,8 @@ import java.net.InetSocketAddress
 class ZkServiceProvider(
     private val host: String,
     private val port: Int,
-    private val serviceRegister: ServiceRegister
+    private val serviceRegister: ServiceRegister,
+    private val rateLimiterProvider: RateLimiterProvider
 ): ServiceProvider {
 
     // 集合中存放服务的实例
@@ -34,6 +37,13 @@ class ZkServiceProvider(
             throw IllegalArgumentException("希望获取的接口名称不能为空")
         }
         return interfaceProvider[interfaceName] ?: NullPointerException("当前尝试获取的服务名为 $interfaceName，该服务不存在。")
+    }
+
+    override fun getRateLimiter(interfaceName: String?): RateLimiter {
+        if (interfaceName == null) {
+            throw IllegalArgumentException("希望获取的接口名称不能为空")
+        }
+        return rateLimiterProvider.getRateLimiter(interfaceName)
     }
 
 
