@@ -9,8 +9,10 @@ import org.bohan.rpc.client.client.impl.IOClient
 import org.bohan.rpc.client.client.impl.SimpleSocketRpcClient
 import org.bohan.rpc.client.conf.ClientConfig
 import org.bohan.rpc.client.conf.enums.ClientType
+import org.bohan.rpc.client.proxy.breaker.SimpleCircuitBreakerProvider
 import org.bohan.rpc.client.proxy.retry.RpcRequestRetryHandler
 import org.bohan.rpc.contract.domain.req.RpcRequest
+import java.lang.IllegalStateException
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
@@ -19,7 +21,8 @@ import kotlin.NullPointerException
 
 @Slf4j
 class ClientProxy(
-    private val client: RpcClient
+    private val client: RpcClient,
+    private val circuitBreakerProvider: SimpleCircuitBreakerProvider
 ): InvocationHandler {
 
     //jdk动态代理，每一次代理对象调用方法，都会经过此方法增强（反射获取request对象，socket发送到服务端）
@@ -30,12 +33,22 @@ class ClientProxy(
             params = args,
             paramsType = method.parameterTypes
         )
+        // 获取熔断器请求，判断是否可以发送请求
+        val circuitBreaker = circuitBreakerProvider.getCircuitBreaker(method.declaringClass.name)
+        if (! circuitBreaker.allowRequest()) {
+            throw IllegalStateException("当前请求服务已熔断")
+        }
 
         log.info("发送请求：$request")
-
         val response = RpcRequestRetryHandler(client).sendRequestWithRetry(request)
-
         log.info("响应内容为：$response")
+
+        // 记录请求状态
+        if (response.successful()) {
+            circuitBreaker.recordSuccess()
+        } else {
+            circuitBreaker.recordFailure()
+        }
 
         return response.data ?: throw NullPointerException("服务端没有返回数据")
     }
